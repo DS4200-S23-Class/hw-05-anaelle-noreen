@@ -10,14 +10,14 @@ const FRAME1 = d3.select("#scatterplot")
     .attr("width", FRAME_WIDTH)
     .attr("class", "frame"); 
 
-// Next, open file 
+// Scatterplot function
 d3.csv("data/scatter-data.csv").then((data) => { 
 
     // let's check our data
     console.log(data); //Notice this data has 3 columns
                         // to access data in a column, use .
 
-    var x = d3.scaleLinear()
+    let x = d3.scaleLinear()
     .domain([0, 10])
     .range([ 0, FRAME_WIDTH - MARGINS.left - MARGINS.right]);
     
@@ -27,7 +27,7 @@ d3.csv("data/scatter-data.csv").then((data) => {
     .call(d3.axisBottom(x));
 
     // Add Y axis
-    var y = d3.scaleLinear()
+    let y = d3.scaleLinear()
     .domain([0, 10])
     .range([FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
 
@@ -42,17 +42,13 @@ d3.csv("data/scatter-data.csv").then((data) => {
     .enter()
     .append("circle")
         .attr("class", "circles")
+        .attr("id", (d) => {return "(" + d.x + ", " + d.y + ")"} )
         .attr("cx", (d) => { return x(d.x) + MARGINS.left; } )
         .attr("cy", (d) =>{ return y(d.y) + MARGINS.top; } )
         .attr("r", 5)
         .style("fill", "lightsalmon");
 
 
-    function handleMouseover(event, d) {
-        // on mouseover, make opaque 
-        d.style("fill", "red"); 
-        
-    };
 
     FRAME1.selectAll(".circles")
     .on("mouseover", function(d) {
@@ -62,6 +58,10 @@ d3.csv("data/scatter-data.csv").then((data) => {
         d3.select(this).style("fill", "lightsalmon");
       })
       .on("click", function(d){
+        // Update last clicked in text when circle is clicked
+        let last_clicked = d3.select(this).attr("id")
+        d3.select("#coordinates").text(last_clicked)
+
         if(d3.select(this).style('stroke') == 'blue'){
             d3.select(this).style("stroke", "none");
         }
@@ -72,8 +72,55 @@ d3.csv("data/scatter-data.csv").then((data) => {
         }
       }); //add event listeners
 
+
+
+      console.log("lol")
+      d3.selectAll(".button")
+      .on("click", function(d){
+        let xVal = document.getElementById("xRange").value
+        let yVal = document.getElementById("yRange").value
+        console.log("lol")
+        console.log(xVal)
+        console.log(yVal)
+
+        FRAME1.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+        .attr("class", "circles")
+        .attr("id", (d) => {return "(" + xVal + ", " + yVal + ")"} )
+        .attr("cx", (d) => { return x(xVal) + MARGINS.left; } )
+        .attr("cy", (d) =>{ return y(yVal) + MARGINS.top; } )
+        .attr("r", 5)
+        .style("fill", "lightsalmon")
+        .on("mouseover", function(d) {
+            d3.select(this).style("fill", "red");
+          })
+          .on("mouseout", function(d) {
+            d3.select(this).style("fill", "lightsalmon");
+          })
+          .on("click", function(d){
+            // Update last clicked in text when circle is clicked
+            let last_clicked = d3.select(this).attr("id")
+            d3.select("#coordinates").text(last_clicked)
+    
+            if(d3.select(this).style('stroke') == 'blue'){
+                d3.select(this).style("stroke", "none");
+            }
+            else{
+                d3.select(this).style("stroke", "blue");
+                d3.select(this).style("stroke-width", "3px");
+    
+            }
+          });
+      })
+
+
   });  
 
+
+// Bar Chart 
 const FRAME2 = d3.select("#barchart") 
 .append("svg") 
     .attr("height", FRAME_HEIGHT)   
@@ -85,7 +132,7 @@ d3.csv("data/bar-data.csv").then((data) => {
     console.log(data)
 
     // X Axis
-    var x = d3.scaleBand()
+    let x = d3.scaleBand()
         .range([ 0, FRAME_WIDTH - MARGINS.left - MARGINS.right ])
         .domain(data.map(function(d) { return d.category; }))
         .padding(0.2);
@@ -100,7 +147,7 @@ d3.csv("data/bar-data.csv").then((data) => {
     console.log(Y_MAX);
     // Add Y axis
     
-    var y = d3.scaleLinear()
+    let y = d3.scaleLinear()
     .domain([0, 100])
     .range([FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
 
@@ -125,7 +172,7 @@ d3.csv("data/bar-data.csv").then((data) => {
 
 
    
-    var tooltip = d3.select("#barchart")
+    let tooltip = d3.select("#barchart")
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
@@ -140,8 +187,8 @@ d3.csv("data/bar-data.csv").then((data) => {
     FRAME2.selectAll(".bars")
     .on("mouseover", function(d) {
         d3.select(this).style("fill", "#CF9FFF");
-        var category = d3.select(this).attr("category");
-        var amount = d3.select(this).attr("amt");
+        let category = d3.select(this).attr("category");
+        let amount = d3.select(this).attr("amt");
         tooltip
         .html("Category: " + category + "<br>" + "Amount: " + amount)
         .style("opacity", 1)
@@ -165,3 +212,19 @@ d3.csv("data/bar-data.csv").then((data) => {
       
 
 });
+
+// Button inputs in right section
+const FRAME3 = d3.select("#selection") 
+.append("div")
+.attr("id", "selection"); 
+
+// FRAME3.append("input")
+// .attr("type", "number")
+// .attr("id", "xRange")
+// // .attr("min", "1")
+// // .attr("max", "9")
+// .attr("value", "Select X-Value 1-9");
+let inputX = d3.select(".xRange");
+console.log(inputX)
+
+

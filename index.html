@@ -17,9 +17,20 @@
         <div id = "barchart"></div>
     </div>
     <div class = 'column2'>
-        <div id = "dropdownX"></div>
-        <div id = "dropdownY"></div>
-        
+        <div id = "lastclicked">
+            <p>Last point clicked:</p>
+            <p id = "coordinates"> (,) </p>
+        </div>
+        <div id = "selection">
+             <!-- Information about the scatterplot and interactive elements -->
+        <p>
+            Select an X-Value (1-9): <br> <input type="range" id="xRange" min="1" max="9"> <br>
+            Select a Y-Value(1-9): <br> <input type="range" id="yRange" min="1" max="9">
+        </p>
+        <!-- When button is clicked, call JS method to add a point -->
+        <button  class = "button"> Add Point</button>
+        </div>
+
     </div>
 </div>
 <div class = "ack">

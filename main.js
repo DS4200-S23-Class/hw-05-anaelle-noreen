@@ -49,11 +49,11 @@ d3.csv("data/scatter-data.csv").then((data) => {
             let last_clicked = d3.select(this).attr("id")
             d3.select("#coordinates").text(last_clicked)
             // Check if stroke exists, and change accordingly
-            if(d3.select(this).style('stroke') == '#006080'){
+            if(d3.select(this).style('stroke') == 'teal'){
                 d3.select(this).style("stroke", "none");
             }
             else{
-                d3.select(this).style("stroke", "#006080");
+                d3.select(this).style("stroke", "teal");
                 d3.select(this).style("stroke-width", "3px");
             }
         });

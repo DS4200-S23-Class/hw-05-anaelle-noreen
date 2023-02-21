@@ -1,0 +1,31 @@
+body{
+    font-family: Arial;
+}
+h1{
+    text-align: center;
+}
+
+
+/* Create two unequal columns that floats next to each other*/
+.column1 {
+    float: left;
+    width: 60%;
+  }
+  .column2 {
+    float: right;
+    width: 40%;
+  }
+  
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+/* 
+.circles{
+    fill:lightsalmon
+}
+.circles:hover{
+    fill:blue
+} */

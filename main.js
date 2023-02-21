@@ -23,16 +23,16 @@ d3.csv("data/scatter-data.csv").then((data) => {
     
     // Add X-axis
     FRAME1.append("g")
-    .attr("transform", "translate(" +  MARGINS.left +","+ (FRAME_HEIGHT - MARGINS.top - MARGINS.bottom) + ")")
+    .attr("transform", "translate(" +  MARGINS.left +","+ (FRAME_HEIGHT - MARGINS.top) + ")")
     .call(d3.axisBottom(x));
 
     // Add Y axis
     var y = d3.scaleLinear()
     .domain([0, 10])
-    .range([ FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
+    .range([FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
 
     FRAME1.append("g")
-    .attr("transform", "translate(" + MARGINS.left + ", 0)")
+    .attr("transform", "translate(" + MARGINS.left + ","+ MARGINS.top +")")
     .call(d3.axisLeft(y));
 
     // Add dots
@@ -43,7 +43,7 @@ d3.csv("data/scatter-data.csv").then((data) => {
     .append("circle")
         .attr("class", "circles")
         .attr("cx", (d) => { return x(d.x) + MARGINS.left; } )
-        .attr("cy", (d) =>{ return y(d.y); } )
+        .attr("cy", (d) =>{ return y(d.y) + MARGINS.top; } )
         .attr("r", 5)
         .style("fill", "lightsalmon");
 
@@ -72,48 +72,96 @@ d3.csv("data/scatter-data.csv").then((data) => {
         }
       }); //add event listeners
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // const MAX_Y = d3.max(data, (d) => { return d.x; }); 
-    // const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right; 
-    // const VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom
-    // const Y_SCALE = d3.scaleLinear() // linear scale because we have 
-    // // linear data 
-    //     .domain([MAX_Y, 0]) 
-    //     .range([0, VIS_HEIGHT]); 
-    
-
-    // FRAME1.selectAll("points")  
-    // .data(data)  
-    // .enter()       
-    // .append("circle")  
-    //     .attr("cx", (d) => {return d.x + MARGINS.left})  
-    //     .attr("cy", (d) => {return (Y_SCALE(d.y) + MARGINS.top);})
-    //     .attr("r", 5)
-    //     .attr("class", "point"); 
-    // // add our circles with styling 
-    // // FRAME1.selectAll("circle") 
-    // //     .data(data) // this is passed from  .then()
-    // //     .enter()  
-    // //     .append("circle")
-    // //       .attr("cx", (d) => { return d.x; }) // use x for cx
-    // //       .attr("cy", (d) => { return d.y; }) // use y for cy
-    // //       .attr("r", 5)  // set r 
-    // //       .attr("fill", (d) => { return d.color; }); // fill by color
-  
   });  
+
+const FRAME2 = d3.select("#barchart") 
+.append("svg") 
+    .attr("height", FRAME_HEIGHT)   
+    .attr("width", FRAME_WIDTH)
+    .attr("class", "frame"); 
+
+
+d3.csv("data/bar-data.csv").then((data) => {
+    console.log(data)
+
+    // X Axis
+    var x = d3.scaleBand()
+        .range([ 0, FRAME_WIDTH - MARGINS.left - MARGINS.right ])
+        .domain(data.map(function(d) { return d.category; }))
+        .padding(0.2);
+
+    FRAME2.append("g")
+        .attr("transform", "translate(" +  MARGINS.left +","+ (FRAME_HEIGHT - MARGINS.top) + ")")
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+        .style("text-anchor", "middle");
+
+    const Y_MAX = d3.max(data, (d) => { return parseInt(d.amount); });
+    console.log(Y_MAX);
+    // Add Y axis
+    
+    var y = d3.scaleLinear()
+    .domain([0, 100])
+    .range([FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
+
+    FRAME2.append("g")
+        .attr("transform", "translate(" +  MARGINS.left +","+(MARGINS.top)+ ")")
+        .call(d3.axisLeft(y));
+
+
+        // Bars
+    FRAME2.selectAll("mybar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "bars")
+    .attr("category", function(d) {return String(d.category)})
+    .attr("amt", function(d) {return String(d.amount)})
+    .attr("x", function(d) { return x(d.category) + MARGINS.left; })
+    .attr("y", function(d) { return y(d.amount) + MARGINS.top; })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return FRAME_HEIGHT- MARGINS.top - MARGINS.bottom - y(d.amount); })
+    .attr("fill", "lavender");
+
+
+   
+    var tooltip = d3.select("#barchart")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "lightgray")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "5px");
+
+
+
+    FRAME2.selectAll(".bars")
+    .on("mouseover", function(d) {
+        d3.select(this).style("fill", "#CF9FFF");
+        var category = d3.select(this).attr("category");
+        var amount = d3.select(this).attr("amt");
+        tooltip
+        .html("Category: " + category + "<br>" + "Amount: " + amount)
+        .style("opacity", 1)
+      })
+      .on("mousemove", function(event, d){
+        // console.log(d3.pointer(event));
+        const [mouseX, mouseY] = d3.pointer(event, this);
+        // console.log(mouseX, mouseY);
+        tooltip.style("top", mouseY);
+        tooltip.style("left", mouseX);
+
+        // setPosition(mouseX + MARGINS.left, mouseY + MARGINS.top);
+        // tooltip
+        //   .attr('position', `(${x}, ${y})`);
+      })
+      .on("mouseout", function(d) {
+        d3.select(this).style("fill", "lavender");
+        tooltip.style("opacity", 0)
+      });
+       //add event listeners
+      
+
+});

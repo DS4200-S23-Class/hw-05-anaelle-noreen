@@ -1,7 +1,12 @@
+/* Set text to Arial */
 body{
     font-family: Arial;
 }
+/* Center headings */
 h1{
+    text-align: center;
+}
+h2{
     text-align: center;
 }
 
@@ -10,39 +15,42 @@ h1{
 .column1 {
     float: left;
     width: 60%;
-  }
-  .column2 {
+}
+.column2 {
     float: right;
     width: 40%;
-  }
-  
-  .row:after {
+}
+.row:after {
     content: "";
     display: table;
     clear: both;
-  }
+}
 
-  #barchart{
+/* Set relative position of the div where the barchart is contained */
+#barchart{
     position: relative;
-  }
+}
   
-  .tooltip{
+  /* Set style for the tooltip */
+.tooltip{
     opacity: 0;
-    background-color: aliceblue;
-    border: solid;
-    border-width: "1px";
-    border-radius: "5px";
+    background-color: rgb(146, 186, 220);
+    width: 100px;
     padding: "5px";
     position:absolute;
-  }
+    pointer-events: none;
+    left: -200px;
+    top: 300px;
+}
 
   
-
-  .circles{
+  /* Set points color */
+.circles{
     fill:lightsalmon;
-  }
+}
 
-  .bars{
+  /* Set default bars color */
+.bars{
     fill:lavender;
-  }
+}
 

@@ -98,9 +98,11 @@ d3.csv("data/scatter-data.csv").then((data) => {
     d3.selectAll(".button")
         .on("click", function(d){
         // Get the values from dropdowns
-        let xVal = document.getElementById("selectX").value
-        let yVal = document.getElementById("selectY").value
-        
+        let xVal = document.getElementById("selectX").value;
+        let yVal = document.getElementById("selectY").value;
+        // let xVal = (d3.select("#selectX")).attr("value");
+        // let yVal = (d3.select("#selectY")).attr("value");
+        console.log(xVal, yVal);
         // Add correspoinding circles in the location specified
         FRAME1.append('g')
         .selectAll("dot")
@@ -174,34 +176,33 @@ d3.csv("data/bar-data.csv").then((data) => {
         .append("div")
         .attr("class", "tooltip");
     
+    // Add event listeners to tooltip
     FRAME2.selectAll(".bars")
     .on("mouseover", function(d) {
+        // Change the color of the bar being hovered over
         d3.select(this).style("fill", "#CF9FFF");
-        tooltip.style("opacity", 1)
-      })
+    })
     .on("mousemove", function(event, d){
-         console.log(d3.pointer(event));
+        //  console.log(d3.pointer(event));
+        // Get the category and amount of the bar being hovered over
         let category = d3.select(this).attr("category");
         let amount = d3.select(this).attr("amt");
-        tooltip.html("Category: " + category + "<br>" + "Amount: " + amount);
         
+        // Get the location of the mouse pointer
         const [mouseX, mouseY] = d3.pointer(event, this);
-        // console.log(mouseX, mouseY);
-        // console.log(tooltip.attr("top", mouseY));
-        // im not sure why it's still not working, probably 
-        // need to write some function to update the location of the 
-        // tooltip?????
-        tooltip.attr("x", mouseX - FRAME_HEIGHT/2 + 10);
-        tooltip.attr("y", mouseY - FRAME_HEIGHT/2 + 10);
+        // Change the tooltips content and location 
+        tooltip.html("Category: " + category + "<br>" + "Amount: " + amount)
+            .style("opacity", 1)
+            .style("left", mouseX + 10 + "px")
+            .style("top", mouseY + 10 + "px");
 
-      })
+    })
     .on("mouseout", function(d) {
+        // Switch back to original color and hide content
         d3.select(this).style("fill", "lavender");
-        tooltip.style("opacity", 0)
+        tooltip.style("opacity", 0);
     });
-       //add event listeners
       
-
 });
 
 

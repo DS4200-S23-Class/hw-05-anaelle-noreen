@@ -69,8 +69,7 @@ d3.csv("data/scatter-data.csv").then((data) => {
         .attr("id", (d) => {return "(" + d.x + ", " + d.y + ")"} )
         .attr("cx", (d) => { return x(d.x) + MARGINS.left; } )
         .attr("cy", (d) =>{ return y(d.y) + MARGINS.top; } )
-        .attr("r", 5)
-        .style("fill", "lightsalmon");
+        .attr("r", 5);
     // Add Event listeners to them
     circleEvents();
 
@@ -112,8 +111,7 @@ d3.csv("data/scatter-data.csv").then((data) => {
             .attr("id", (d) => {return "(" + xVal + ", " + yVal + ")"} )
             .attr("cx", (d) => { return x(xVal) + MARGINS.left; } )
             .attr("cy", (d) =>{ return y(yVal) + MARGINS.top; } )
-            .attr("r", 5)
-            .style("fill", "lightsalmon");
+            .attr("r", 5);
         // Update event listeners to the new circles
         circleEvents();
 
@@ -125,10 +123,10 @@ d3.csv("data/scatter-data.csv").then((data) => {
 // -------------------------- BAR CHART PROCESSING --------------------------------------- 
 // Add new svg to house the bar chart
 const FRAME2 = d3.select("#barchart") 
-.append("svg") 
+    .append("svg") 
     .attr("height", FRAME_HEIGHT)   
     .attr("width", FRAME_WIDTH)
-    .attr("class", "frame"); 
+    .attr("class", "frame");
 
 // Bar Chart function
 d3.csv("data/bar-data.csv").then((data) => {
@@ -149,7 +147,7 @@ d3.csv("data/bar-data.csv").then((data) => {
 
     // Add Y axis
     let y = d3.scaleLinear()
-        .domain([0, 100])
+        .domain([0, Y_MAX+5])
         .range([FRAME_HEIGHT- MARGINS.top - MARGINS.bottom, 0]);
     FRAME2.append("g")
         .attr("transform", "translate(" +  MARGINS.left +","+(MARGINS.top)+ ")")
@@ -166,47 +164,41 @@ d3.csv("data/bar-data.csv").then((data) => {
         .attr("x", function(d) { return x(d.category) + MARGINS.left; })
         .attr("y", function(d) { return y(d.amount) + MARGINS.top; })
         .attr("width", x.bandwidth())
-        .attr("height", function(d) { return FRAME_HEIGHT- MARGINS.top - MARGINS.bottom - y(d.amount); })
-        .attr("fill", "lavender");
+        .attr("height", function(d) { 
+            return FRAME_HEIGHT- MARGINS.top - MARGINS.bottom - y(d.amount); 
+        });
 
 
     // Create tooltip for the barchart
     let tooltip = d3.select("#barchart")
         .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .style("background-color", "lightgray")
-        .style("border", "solid")
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "5px");
-
-
-
+        .attr("class", "tooltip");
+    
     FRAME2.selectAll(".bars")
     .on("mouseover", function(d) {
         d3.select(this).style("fill", "#CF9FFF");
+        tooltip.style("opacity", 1)
+      })
+    .on("mousemove", function(event, d){
+         console.log(d3.pointer(event));
         let category = d3.select(this).attr("category");
         let amount = d3.select(this).attr("amt");
-        tooltip
-        .html("Category: " + category + "<br>" + "Amount: " + amount)
-        .style("opacity", 1)
-      })
-      .on("mousemove", function(event, d){
-        // console.log(d3.pointer(event));
+        tooltip.html("Category: " + category + "<br>" + "Amount: " + amount);
+        
         const [mouseX, mouseY] = d3.pointer(event, this);
         // console.log(mouseX, mouseY);
-        tooltip.style("top", mouseY);
-        tooltip.style("left", mouseX);
+        // console.log(tooltip.attr("top", mouseY));
+        // im not sure why it's still not working, probably 
+        // need to write some function to update the location of the 
+        // tooltip?????
+        tooltip.attr("x", mouseX - FRAME_HEIGHT/2 + 10);
+        tooltip.attr("y", mouseY - FRAME_HEIGHT/2 + 10);
 
-        // setPosition(mouseX + MARGINS.left, mouseY + MARGINS.top);
-        // tooltip
-        //   .attr('position', `(${x}, ${y})`);
       })
-      .on("mouseout", function(d) {
+    .on("mouseout", function(d) {
         d3.select(this).style("fill", "lavender");
         tooltip.style("opacity", 0)
-      });
+    });
        //add event listeners
       
 

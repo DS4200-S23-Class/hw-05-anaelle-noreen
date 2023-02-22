@@ -22,10 +22,27 @@ h1{
     clear: both;
   }
 
-/* 
-.circles{
-    fill:lightsalmon
-}
-.circles:hover{
-    fill:blue
-} */
+  #barchart{
+    position: relative;
+  }
+  
+  .tooltip{
+    opacity: 0;
+    background-color: aliceblue;
+    border: solid;
+    border-width: "1px";
+    border-radius: "5px";
+    padding: "5px";
+    position:absolute;
+  }
+
+  
+
+  .circles{
+    fill:lightsalmon;
+  }
+
+  .bars{
+    fill:lavender;
+  }
+
